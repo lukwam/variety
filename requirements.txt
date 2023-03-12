@@ -1,0 +1,6 @@
+crossword
+ipuz
+puzpy
+pyyaml
+requests
+xmlschema

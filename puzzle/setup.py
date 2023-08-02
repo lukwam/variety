@@ -19,7 +19,7 @@ from setuptools import setup
 setup(
     name='puzzle',
 
-    version='0.0.1',
+    version='0.0.2',
 
     description='Puzzle',
     long_description='',
@@ -33,6 +33,9 @@ setup(
     install_requires=[
         'pyyaml',
     ],
-
+    package_data={
+        'puzzle.templates': ['svg.html'],
+    },
+    include_package_data=True,
     zip_safe=False,
 )

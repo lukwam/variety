@@ -1,0 +1,133 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" id="grid" xmlns:xlink="http://www.w3.org/1999/xlink"
+    data-title="{{ puzzle.title }}" data-rows="{{ puzzle.height }}" data-cols="{{ puzzle.width }}" data-size="50"
+    data-creator="HexGrids" height="{{ puzzle.height * 50 + 8 }}" width="{{ puzzle.width * 50 + 8 }}" fill="white">
+    <title>{{ puzzle.title }}</title>
+    <desc>Created by HexGrids - https://github.com/lukwam/hexgrids</desc>
+    <defs>
+        <circle id="svg-circle" r="22" fill="transparent" stroke="black" stroke-width="1px" />
+        <circle id="svg-shadecircle" r="22" />
+        <rect id="svg-barjoincap" fill="black" height="4" width="4" x="0" y="0" />
+        <rect id="svg-shadesquare" height="50" width="50" stroke="black" stroke-width="1px" />
+        <rect id="svg-square" height="50" width="50" stroke="black" stroke-width="1px" />
+    </defs>
+
+    <!-- Blanks -->
+    <g id="svg-blanks" />
+
+    <!-- Squares -->
+    <g id="svg-squares">
+        {% for row in puzzle.grid.grid %}
+        {%- for cell in row if cell.value %}
+        <use id="svg-square-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-square" fill="{{ cell.styles }}"
+            data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 4}}"
+            y="{{ cell.row * 50 + 4 }}" />
+        {%- endfor %}
+        {% endfor %}
+    </g>
+
+    <!-- Blocks -->
+    <g id="svg-blocks" />
+
+    <!-- Shade Squares -->
+    <g id="svg-shadesquares" />
+
+    <!-- Shade Circles -->
+    <g id="svg-shadecircles" />
+
+    <!-- Circles -->
+    <g id="svg-circles" />
+
+    <!-- Across Bars -->
+    <g id="svg-acrossbars" stroke="black" stroke-width="4px">
+        {% for row in puzzle.grid.grid %}
+        {% for cell in row if cell.left_bar %}
+        <line id="svg-acrossbar-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
+            x1="{{ cell.col * 50 + 4 }}" y1="{{ cell.row * 50 + 4 }}" x2="{{ cell.col * 50 + 4 }}"
+            y2="{{ cell.row * 50 + 54 }}" />
+        {% endfor %}
+        {% endfor %}
+    </g>
+
+    <!-- Down Bars -->
+    <g id="svg-downbars" stroke="black" stroke-width="4px">
+        {% for row in puzzle.grid.grid %}
+        {% for cell in row if cell.top_bar %}
+        <line id="svg-downbar-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
+            x1="{{ cell.col * 50 + 4 }}" y1="{{ cell.row * 50 + 4 }}" x2="{{ cell.col * 50 + 54 }}"
+            y2="{{ cell.row * 50 + 4 }}" />
+        {% endfor %}
+        {% endfor %}
+    </g>
+
+    <!-- Bar Join Caps -->
+    <g id="svg-barjoincaps" style="display: none;">
+        <use id="svg-barjoincap-1-5" xlink:href="#svg-barjoincap" data-col="5" data-row="1" x="252" y="52" />
+        <use id="svg-barjoincap-1-7" xlink:href="#svg-barjoincap" data-col="7" data-row="1" x="352" y="52" />
+        <use id="svg-barjoincap-2-10" xlink:href="#svg-barjoincap" data-col="10" data-row="2" x="502" y="102" />
+        <use id="svg-barjoincap-2-11" xlink:href="#svg-barjoincap" data-col="11" data-row="2" x="552" y="102" />
+        <use id="svg-barjoincap-5-1" xlink:href="#svg-barjoincap" data-col="1" data-row="5" x="52" y="252" />
+        <use id="svg-barjoincap-5-5" xlink:href="#svg-barjoincap" data-col="5" data-row="5" x="252" y="252" />
+        <use id="svg-barjoincap-5-6" xlink:href="#svg-barjoincap" data-col="6" data-row="5" x="302" y="252" />
+        <use id="svg-barjoincap-5-7" xlink:href="#svg-barjoincap" data-col="7" data-row="5" x="352" y="252" />
+        <use id="svg-barjoincap-5-9" xlink:href="#svg-barjoincap" data-col="9" data-row="5" x="452" y="252" />
+        <use id="svg-barjoincap-5-10" xlink:href="#svg-barjoincap" data-col="10" data-row="5" x="502" y="252" />
+        <use id="svg-barjoincap-6-1" xlink:href="#svg-barjoincap" data-col="1" data-row="6" x="52" y="302" />
+        <use id="svg-barjoincap-6-5" xlink:href="#svg-barjoincap" data-col="5" data-row="6" x="252" y="302" />
+        <use id="svg-barjoincap-6-6" xlink:href="#svg-barjoincap" data-col="6" data-row="6" x="302" y="302" />
+        <use id="svg-barjoincap-6-7" xlink:href="#svg-barjoincap" data-col="7" data-row="6" x="352" y="302" />
+        <use id="svg-barjoincap-6-11" xlink:href="#svg-barjoincap" data-col="11" data-row="6" x="552" y="302" />
+        <use id="svg-barjoincap-7-2" xlink:href="#svg-barjoincap" data-col="2" data-row="7" x="102" y="352" />
+        <use id="svg-barjoincap-7-3" xlink:href="#svg-barjoincap" data-col="3" data-row="7" x="152" y="352" />
+        <use id="svg-barjoincap-7-5" xlink:href="#svg-barjoincap" data-col="5" data-row="7" x="252" y="352" />
+        <use id="svg-barjoincap-7-6" xlink:href="#svg-barjoincap" data-col="6" data-row="7" x="302" y="352" />
+        <use id="svg-barjoincap-7-7" xlink:href="#svg-barjoincap" data-col="7" data-row="7" x="352" y="352" />
+        <use id="svg-barjoincap-7-11" xlink:href="#svg-barjoincap" data-col="11" data-row="7" x="552" y="352" />
+        <use id="svg-barjoincap-10-1" xlink:href="#svg-barjoincap" data-col="1" data-row="10" x="52" y="502" />
+        <use id="svg-barjoincap-10-2" xlink:href="#svg-barjoincap" data-col="2" data-row="10" x="102" y="502" />
+        <use id="svg-barjoincap-11-5" xlink:href="#svg-barjoincap" data-col="5" data-row="11" x="252" y="552" />
+        <use id="svg-barjoincap-11-7" xlink:href="#svg-barjoincap" data-col="7" data-row="11" x="352" y="552" />
+    </g>
+
+    <!-- Numbers/Labels -->
+    <g id="svg-numbers" fill="black" font-family="helvetica" font-size="14px">
+        {% for row in puzzle.grid.grid %}
+        {% for cell in row if cell.name %}
+        <text id="svg-number-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
+            x="{{ cell.col * 50 + 8 }}" y="{{ cell.row * 50 + 19 }}">{{ cell.name }}</text>
+        {% endfor %}
+        {% endfor %}
+    </g>
+
+    {% if show_solution -%}
+    <!-- Answers -->
+    <g id="svg-answers" fill="black" font-family="helvetica" font-size="24px" text-anchor="middle">
+        {% for row in puzzle.grid.grid %}
+        {% for cell in row if cell.value %}
+        <text id="svg-answer-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
+            x="{{ cell.col * 50 + 29 }}" y="{{ cell.row * 50 + 29 }}" dominant-baseline="central">{{ cell.value
+            }}</text>
+        {% endfor %}
+        {% endfor %}
+    </g>
+    {%- endif %}
+
+    <!-- Borders -->
+    <g id="svg-border" stroke="black" stroke-width="4px">
+        {% for row in puzzle.grid.grid %}
+        {%- for cell in row if cell.right_border or cell.bottom_border %}
+        {%- if cell.right_border %}
+        <line id="svg-acrossborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
+            x1="{{ cell.col * 50 + 54}}" y1="{{ cell.row * 50 + 2 }}" x2="{{ cell.col * 50 + 54 }}"
+            y2="{{ cell.row * 50 + 56 }}" />
+        {% endif %}
+        {% if cell.bottom_border %}
+        <line id="svg-downborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
+            x1="{{ cell.col * 50 + 2}}" y1="{{ cell.row * 50 + 54 }}" x2="{{ cell.col * 50 + 56 }}"
+            y2="{{ cell.row * 50 + 54 }}" />
+        {%- endif %}
+        {%- endfor %}
+        {%- endfor %}
+    </g>
+
+</svg>

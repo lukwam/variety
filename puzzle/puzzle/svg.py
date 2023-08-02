@@ -3,6 +3,8 @@
 import json
 from xml.dom import minidom
 
+from flask import render_template
+
 
 class SVG:
     """SVG class."""
@@ -183,3 +185,8 @@ class SVG:
                 "styles": {},
             },
         }
+
+    def create(self, puzzle):
+        """Return an SVG string of the puzzle."""
+        body = render_template("svg.html", puzzle=puzzle)
+        return body

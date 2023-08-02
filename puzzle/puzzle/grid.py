@@ -303,7 +303,8 @@ class Grid:
                     if "default" in cell_styles:
                         value = cell_styles["default"]
                         del cell_styles["default"]
-                    cell.styles = cell_styles
+                    if cell.styles:
+                        cell.styles = cell_styles
 
                 if value != "_":
                     cell.default = value

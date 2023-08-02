@@ -21,6 +21,10 @@ class Cell:
         self._right_bar = False
         self._top_bar = False
 
+        # styling information
+        self.default = None
+        self.styles = {}
+
     @property
     def blank(self):
         """Return true if this cell is blank."""
@@ -38,13 +42,6 @@ class Cell:
             style = self.grid.style[self.row][self.col]
             if style != "_":
                 return style
-        return None
-
-    @property
-    def styles(self):
-        """Return the styles for this cell."""
-        if self.style in self.grid.styles:
-            return self.grid.styles[self.style]
         return None
 
     def set_bottom_bar(self):

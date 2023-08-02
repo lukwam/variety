@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Grid class file."""
+import json
 import logging
 import re
 
@@ -90,6 +91,7 @@ class Grid:
         """Creat the grid data."""
         self.create_grid_rows()
         self.create_grid_columns()
+        self.parse_grid_style()
 
     def create_grid_columns(self):
         """Create the grid columns."""
@@ -256,6 +258,55 @@ class Grid:
 
         output += border
         print(output)
+
+    def parse_grid_style(self):
+        """Parse the style information for the grid and update the cells accordingly."""
+        print("Parsing grid styles...")
+        # print("\n".join(self.style))
+        print(json.dumps(self.styles, indent=2, sort_keys=True))
+
+        for y, row in enumerate(self.style):
+            values = {}
+
+            # remove multi-character values from the string, which are literals
+            matches = re.findall(r"\[(.*?)\]", row)
+            for match in matches:
+                text = f"[{match}]"
+                x = row.find(text)
+                id = (x, y)
+                values[id] = match
+                row = row.replace(text, " ")
+
+            # go through the remaining characters
+            for x, char in enumerate(row):
+                id = (x, y)
+                if id in values:
+                    if char != " ":
+                        print(f"ERROR: duplicate cell at {id}")
+                    continue
+                values[id] = char
+
+            # update cells
+            for id in sorted(values):
+                value = values[id]
+                x, y = id
+                try:
+                    cell = self.grid[y][x]
+                except IndexError:
+                    print(f"ERROR: cell {id} not found")
+                    continue
+
+                # check if this value has styles defined
+                if value in self.styles:
+                    cell_styles = self.styles[value]
+                    # check if the styles define a default value
+                    if "default" in cell_styles:
+                        value = cell_styles["default"]
+                        del cell_styles["default"]
+                    cell.styles = cell_styles
+
+                if value != "_":
+                    cell.default = value
 
     def to_dict(self):
         """Return the grid as a dictionary."""

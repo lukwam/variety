@@ -64,8 +64,9 @@ class CrypticCrossword(Crossword):
         self.block = None
         self.empty = None
 
-        # add an attribute for solution
+        # add an attributes for solution and words
         self.solution = None
+        self.words = {}
 
     @property
     def content(self):

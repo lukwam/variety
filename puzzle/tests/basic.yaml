@@ -1,0 +1,108 @@
+---
+title: Hello World!
+author: Tweedle Dee and Tweedle Dum
+editor: Barney McFly
+publication: The Puzzle Times
+date: 1970-01-01
+issue: January 1970
+number: 42
+
+instructions: |
+  These are a bunch of words that make up the description of the puzzle.
+
+  This description has more than one paragraph. It also has some special
+  characters, such as this fancy apostrophe: ’, and these fancy curly
+  quotes: “” and this fancy dash: —.
+
+  In addition to all of that, it has some <b>BOLD</b> and <i>ITALIC</i>
+  text, to show off the support for some basic HTML tags.
+
+  Enjoy!
+
+solution: >
+  These are some words to describe the solution to the puzzle.
+
+  You can imagine it having a list of UNCLUED answers, or an
+  explanation of the final answer, or whatever you want.
+
+grid:
+
+  rows:
+    - FRENCHBED|DOS
+    - LINED|U|E|BROWN
+    - ANCIENT|A|O|P|T|E
+    - B|C|AGATES|WERE
+    - BASHFUL|A|S|Y|A|Z
+    - Y|CESS|P|SLEEPY
+    - GRUMPY|G|TAPS|M
+    - R|E|F|A|A|HOSPICE
+    - OARS|SAUNAS|L|T
+    - U|M|A|K|M|PROCTOR
+    - NONES|P|D|WHITE
+    - DOC|DRYSPELLS
+
+  columns:
+    - FLABBY|GROUND
+    - R|INCA|CREAM|O|O
+    - ENCASE|U|FRANC
+    - NEIGHS|MASKED
+    - C|DEAF|SPASMS|R
+    - HUNTUP|Y|HAPPY
+    - BETEL|S|GOURDS
+    - E|BASALT|SNOW|P
+    - DROWSE|APACHE
+    - DOPEY|E|PISTIL
+    - O|W|TRAPS|CLOT|L
+    - SNEEZY|METRES
+
+clues:
+
+  Across: |
+    1. Europeans plot practical joke ~ FRENCH BED ~ FRENCH BED
+    7. Acceptable behavior at parties? ~ DOS ~ DOS (double def.)
+    8. Faced with wrinkles ~ LINED ~ LINED (double def.)
+    11. Toast and cocoa ~ BROWN ~ BROWN (double def.)
+    12. About... about 101 years old ~ ANCIENT ~ AN(CI)ENT
+    14. Follow ocean about, returning stones ~ AGATES ~ AGATES (se[tag]a rev.)
+    15. Used to be wolf's mate ~ WERE ~ WERE (double def.)
+    16. Tax pool of sorts ~ CESS ~ CESS (double def.)
+    21. Cocks fight back ~ TAPS ~ TAPS (spat rev.)
+    26. A lot of hot pepper will lead to the asylum ~ HOSPICE ~ HO-SPICE
+    28. Propellers in uproar, spinning ~ OARS ~ OARS (hidden)
+    29. A French interior, with mirrored South American baths ~ SAUNAS ~ SA-UN-AS
+    30. Overseer for regressive military program ~ PROCTOR ~ PROCTOR (pro + ROTC rev.)
+    31. Nobody's dates ~ NONES ~ NONES
+    32. Unproductive charms will make no rain fall ~ DRY SPELLS ~ DRY SPELLS
+
+  Down: |
+    1. Bit of flouncing gets baby bent out of shape ~ FLABBY ~ FL-ABBY (baby anag.)
+    2. Put in casket, arrange seance ~ ENCASE ~ ENCASE (anag.)
+    3. Disquieted pig amidst flapping hens making beastly noises ~ NEIGHS ~ NEIGHS (ig inside hens, anag.)
+    4. Attila gets set back in quest ~ HUNT UP ~ HUNT UP (hun + put rev.)
+    5. Rocking Beatle to Miss--a sort of nut ~ BETEL ~ BETEL (Beatle anag. without a)
+    6. Raise arm to point in sleep ~ DROWSE ~ DROWSE (rev. + e)
+    9. Civilization takes little part in reincarnation ~ INCA ~ INCA (hidden)
+    10. Parade a fault--obviously senseless ~ DEAF ~ DEAF (hidden)
+    11. Rock-bottom, head to toe ~ BASALT ~ BASAL-T
+    13. Makes snare drums ~ TRAPS ~ TRAPS (double def.)
+    16. Beat the best ~ CREAM ~ CREAM (double def.)
+    17. Jerks make crude pass at liberated woman ~ SPASMS ~ SPASMS (pass anag. + Ms.)
+    18. Gershwin's first song subject ~ GROUND ~ G-ROUND
+    19. Maiden of mystery invited in disguise ~ MASKED ~ M-ASKED
+    20. There's nothing in false drugs, but people go crazy when out of them ~ GOURDS ~ GOURDS (o in drugs anag.)
+    22. Say! A freckly Indian! ~ APACHE ~ APACHE (homophone)
+    23. Burning to drink up what's in a flower ~ PISTIL ~ PISTIL (lit-sip rev.)
+    24. Merest changes in rhythms ~ METRES ~ METRES (anag.)
+    25. It pays to sound sincere! ~ FRANC ~ FRANC (homophone)
+    27. Lump in bedclothes ~ CLOT ~ CLOT (hidden)
+
+unclued:
+  - BASHFUL
+  - SLEEPY
+  - GRUMPY
+  - WHITE
+  - DOC
+  - SNEEZY
+  - DOPEY
+  - HAPPY
+  - SNOW

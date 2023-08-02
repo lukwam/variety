@@ -10,3 +10,4 @@ __copyright__ = 'Copyright 2023 Lukas Karlsson'
 
 from cryptic.core import CrypticCrossword, CrypticClues, CrypticCluesContainer
 from cryptic.format_hex import from_hex, to_hex
+from cryptic.format_xml import to_xml

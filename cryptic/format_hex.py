@@ -18,10 +18,11 @@ def from_hex(hex_dict):
         "unclued",
         "width",
         "height",
+        "words",
     ]
+
     width = hex_dict.get("width")
     height = hex_dict.get("height")
-
     crossword = CrypticCrossword(width, height)
 
     crossword._format_identifier = CrypticCrossword.HEX
@@ -36,7 +37,9 @@ def from_hex(hex_dict):
     crossword.meta.title = hex_dict["metadata"].get('title')
     crossword.block = hex_dict["settings"].get('block')
     crossword.empty = hex_dict["settings"].get('empty')
+
     crossword.solution = hex_dict.get('solution')
+    crossword.words = hex_dict.get('words', {})
 
     # create clue containers and clues
     clues = hex_dict.get("clues", {})
@@ -61,15 +64,17 @@ def from_hex(hex_dict):
             crossword[x, y].empty = True
         if cell.get("entry"):
             crossword[x, y].entry = cell["entry"]
+        if cell.get("number"):
+            crossword[x, y].number = cell["number"]
         if cell.get("bottom_bar"):
             crossword[x, y].bottom_bar = True
         if cell.get("right_bar"):
             crossword[x, y].right_bar = True
 
     # add unknown keys to format-specific data dict
-    # for key, value in hex_dict.items():
-    #     if key not in known_keys:
-    #         crossword._format[key] = value
+    for key, value in hex_dict.items():
+        if key not in known_keys:
+            crossword._format[key] = value
 
     return crossword
 

@@ -31,6 +31,7 @@ class Puzzle:
 
     optional_fields = [
         "editor",
+        "id",
         "issue",
         "number",
         "settings",
@@ -46,12 +47,18 @@ class Puzzle:
             raise ValueError(
                 f"Puzzle must be a dictionary. Received {type(puzzle)}.",
             )
+        if not isinstance(puzzle, dict):
+            raise ValueError(
+                f"Puzzle must be a dictionary. Received {type(puzzle)}.",
+            )
+        self.id = puzzle.get("id")
         self.puzzle = puzzle
 
         # puzzle metadata
         self._author = None
         self._date = None
         self._editor = None
+
         self._issue = None
         self._number = None
         self._publication = None
@@ -66,6 +73,9 @@ class Puzzle:
         self._grid = None
         self._settings = None
         self._unclued = None
+
+        # error handling
+        self._errors = {}
 
         # load data a from dictionary to initialize the puzzle object
         self._from_dict()
@@ -110,6 +120,21 @@ class Puzzle:
     def entries(self):
         """Return the entries all clues in the puzzle."""
         return self._clues.entries
+
+    def error(self, error, type=None):
+        """Add an error."""
+        if not error:
+            return
+        if not type:
+            type = "other"
+        if type not in self._errors:
+            self._errors[type] = []
+        self._errors[type].append(error)
+
+    @property
+    def errors(self):
+        """Return the errors."""
+        return self._errors
 
     @property
     def grid(self):
@@ -404,9 +429,11 @@ class Puzzle:
                 missing_clues.append(entry)
 
         if extra_clues:
-            print(f"Extra clues: {sorted(extra_clues)}")
+            self.error(f"Extra clues: {sorted(extra_clues)}", "extra_clues")
         if missing_clues:
-            print(f"Missing clues: {sorted(missing_clues)}")
+            self.error(
+                f"Missing clues: {sorted(missing_clues)}", "missing_clues",
+            )
 
     def get_setting(self, setting, default=None):
         """Get a setting."""

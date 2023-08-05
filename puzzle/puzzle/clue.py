@@ -13,6 +13,7 @@ class Clue:
         """Initialize a Clue instance."""
         # the clues container that this clue belongs to
         self.container = container
+        self.puzzle = container.puzzle
 
         self._name = None
         self._clue = None
@@ -404,10 +405,18 @@ class Clue:
     def validate(self):
         """Validate the clue."""
         if not self.name:
-            logging.error(f"Clue does not have a name: {self.clue}")
+            self.puzzle.error(
+                f"Clue does not have a name: {self.clue}", "clue_format",
+            )
         if not self.clue:
-            logging.error(f"Clue does not have a clue: {self.clue}")
+            self.puzzle.error(
+                f"Clue does not have a clue: {self.clue}", "clue_format",
+            )
         if not self.answers:
-            logging.error(f"Clue does not have an answer: {self.clue}")
+            self.puzzle.error(
+                f"Clue does not have an answer: {self.clue}", "clue_format",
+            )
         if not self.solutions:
-            logging.error(f"Clue does not have a solution: {self.clue}")
+            self.puzzle.error(
+                f"Clue does not have a solution: {self.clue}", "clue_format",
+            )

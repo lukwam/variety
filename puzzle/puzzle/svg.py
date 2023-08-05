@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """SVG class file."""
 import json
+import os
 from xml.dom import minidom
 
+from flask import Flask
 from flask import render_template
 
 
@@ -186,7 +188,12 @@ class SVG:
             },
         }
 
-    def create(self, puzzle):
+    @classmethod
+    def create(cls, puzzle, show_solution=False):
         """Return an SVG string of the puzzle."""
-        body = render_template("svg.html", puzzle=puzzle)
-        return body
+        from jinja2 import Environment, FileSystemLoader
+        current_dir = os.path.dirname(__file__)
+        template_folder = f"{current_dir}/templates"
+        env = Environment(loader=FileSystemLoader(template_folder))
+        template = env.get_template("svg.html")
+        return template.render(puzzle=puzzle, show_solution=show_solution)

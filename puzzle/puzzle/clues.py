@@ -37,7 +37,9 @@ class Clues:
         for container in self._containers:
             for entry, clue in container.entries.items():
                 if entry in entries:
-                    logging.warning(f"Duplicate entry: {entry}")
+                    self.puzzle.error(
+                        f"Duplicate entry: {entry}", "duplicate_entry",
+                    )
                 entries[entry] = clue
         return entries
 

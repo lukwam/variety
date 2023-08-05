@@ -5,11 +5,11 @@
 class Settings:
     """Settings class."""
     _defaults = {}
-    _settings = {}
     _validation = {}
 
     def __init__(self, settings):
         """Initialize the Settings class."""
+        self._settings = {}
         for key in settings:
             self.set(key, settings[key])
 

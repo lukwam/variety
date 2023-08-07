@@ -3,7 +3,7 @@
 from puzzle.clue import Clue
 
 
-class CluesContainer:
+class CluesContainer(object):
     """Clues Container class."""
 
     def __init__(self, title, clues, puzzle, settings={}):
@@ -12,6 +12,7 @@ class CluesContainer:
         self._title = None
 
         # control default behavior of clues
+        self._reverse_grid_entries = False
         self._show_enumerations = None
         self._show_grid_entries = True
         self._show_grid_labels = None
@@ -23,6 +24,8 @@ class CluesContainer:
             self.disable_grid_entries()
         if settings.get("show_grid_labels") is False:
             self.disable_grid_labels()
+        if settings.get("reverse_grid_entries") is True:
+            self._reverse_grid_entries = True
 
         # set the clues
         self._clues = clues
@@ -99,6 +102,8 @@ class CluesContainer:
 
     def _create_clues(self, raw_clues):
         """Create the clues."""
+        if not raw_clues:
+            return
         clues = []
         for raw_clue in self._parse_clues(raw_clues):
             clues.append(Clue(raw_clue, self))
@@ -163,6 +168,11 @@ class CluesContainer:
         if self._show_grid_labels is False:
             options.append("no-grid-labels")
         return sorted(options)
+
+    @property
+    def reverse_grid_entries(self):
+        """Return the value of reverse grid entries."""
+        return self._reverse_grid_entries
 
     def to_string(self):
         """Return the clues as a string."""

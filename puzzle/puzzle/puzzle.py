@@ -200,6 +200,11 @@ class Puzzle:
         return self.get_setting("show_grid_border", True)
 
     @property
+    def show_grid_entries(self):
+        """Show grid entries for clues."""
+        return self.get_setting("show_grid_entries", True)
+
+    @property
     def show_grid_labels(self):
         """Show grid labels for clues."""
         return self.get_setting("show_grid_labels", True)
@@ -349,7 +354,8 @@ class Puzzle:
             raise ValueError(
                 f"Instructions must be a string. Received {type(instructions)}.",
             )
-        self._instructions = wrap_text(instructions)
+        # self._instructions = wrap_text(instructions)
+        self._instructions = instructions
 
     def _set_issue(self, puzzle):
         """Set the issue."""

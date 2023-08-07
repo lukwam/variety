@@ -73,6 +73,17 @@ class Cell:
         return False
 
     @property
+    def circle(self):
+        """Return the fill color if cell has a circle."""
+        if self.styles.get("shape") != "circle":
+            return False
+        if "fill" in self.styles:
+            return False
+        if "stroke" in self.styles:
+            return self.styles["stroke"]
+        return "lightgrey"
+
+    @property
     def left_bar(self):
         """Return true if cell has a left bar."""
         if self._left_bar:
@@ -152,9 +163,8 @@ class Cell:
 
     @property
     def shade_circle(self):
-        """Return the background-color if cell has a shade circle."""
-        shape = self.styles.get("shape")
-        if shape != "circle":
+        """Return the fill color if cell has a circle."""
+        if self.styles.get("shape") != "circle":
             return False
         if "fill" in self.styles:
             return self.styles.get("fill")
@@ -166,6 +176,15 @@ class Cell:
         if "background-color" in self.styles:
             return self.styles.get("background-color")
         return False
+
+    @property
+    def shade_x(self):
+        """Return the background-color if cell has a shade x."""
+        if self.styles.get("shape") != "x":
+            return False
+        if "stroke" in self.styles:
+            return self.styles.get("stroke")
+        return "lightgrey"
 
     @property
     def style(self):

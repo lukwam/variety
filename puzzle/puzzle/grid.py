@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Grid class file."""
-import json
+# import json
 import logging
 import re
 
@@ -20,6 +20,12 @@ class Grid:
             "fill": "lightgrey",
             "shape": "circle",
         },
+        "O": {
+            "shape": "circle",
+        },
+        "X": {
+            "shape": "x",
+        },
     }
 
     def __init__(self, puzzle):
@@ -30,21 +36,35 @@ class Grid:
         grid = self.puzzle.puzzle.get("grid", {})
         self.columns = grid["columns"]
         self.rows = grid["rows"]
+        self.style = grid.get("style", [])
+
+        # get the solution grid data (rows and columns)
+        self.solution_columns = grid.get("solution_columns", [])
+        self.solution_rows = grid.get("solution_rows", [])
+        self.solution_style = grid.get("solution_style", [])
+        # print("\n".join(self.solution_columns))
+        # print("\n".join(self.solution_rows))
+        # print("\n".join(self.solution_style))
 
         # parse/clean the grid data
         self._parse_grid()
+        # print("\n".join(self.solution_style))
 
         # get the grid metadata (style and styles)
-        self.style = grid.get("style", [])
-        self.styles = self.default_styles
-        self.styles.update(grid.get("styles", {}))
+
+        self._styles = grid.get("styles", {})
 
         # create empty grid
         self.grid = []
         for _ in range(self.height):
             self.grid.append([None] * self.width)
 
+        self.solution = []
+        for _ in range(self.height):
+            self.solution.append([None] * self.width)
+
         self.create_grid()
+        # self.create_grid(solution=True)
 
     @property
     def entries(self):
@@ -58,6 +78,17 @@ class Grid:
     def height(self):
         """Return the height."""
         return len(self.rows)
+
+    def get_style(self, name):
+        """Return the given style definition."""
+        if name in self.styles:
+            return self.styles[name]
+        return self.default_styles.get(name)
+
+    @property
+    def styles(self):
+        """Return the styles."""
+        return self._styles
 
     @property
     def width(self):
@@ -81,10 +112,17 @@ class Grid:
                     entries.append(word)
         return entries
 
-    def _parse_grid(self):
+    def _parse_grid(self, solution=False):
         """Parse the grid data."""
+        columns = self.columns
+        rows = self.rows
+
+        if solution:
+            columns = self.solution_columns
+            rows = self.solution_rows
+
         for direction in ["rows", "columns"]:
-            data = self.columns if direction == "columns" else self.rows
+            data = columns if direction == "columns" else rows
             length = self.height if direction == "columns" else self.width
 
             # clean up the data
@@ -108,20 +146,36 @@ class Grid:
                     newline += "_"
                 data[y] = newline
 
-            # save the data
-            if direction == "rows":
-                self.rows = data
+            if solution:
+                if direction == "rows":
+                    self.solution_rows = data
+                else:
+                    self.solution_columns = data
             else:
-                self.columns = data
+                if direction == "rows":
+                    self.rows = data
+                else:
+                    self.columns = data
 
-    def _parse_grid_entries(self):
+    def _parse_grid_entries(self, solution=False):
         """Parse the grid entries, match to clues, add labels."""
+        # columns = self.columns
+        # rows = self.rows
+        # grid = self.grid
+
+        # if solution:
+        #     columns = self.solution_columns
+        #     rows = self.solution_rows
+        #     grid = self.solution
+
         # add labels to the across clues
         for y, row in enumerate(self.rows):
             for word in self._parse_entries([row]):
                 if word in self.puzzle.entries:
                     clue = self.puzzle.entries[word]
                     x = row.replace("|", "").find(word)
+                    if clue.reverse_grid_entries:
+                        x += len(word) - 1
                     cell = self.grid[y][x]
                     if not clue.show_grid_label:
                         continue
@@ -136,18 +190,40 @@ class Grid:
                 if word in self.puzzle.entries:
                     clue = self.puzzle.entries[word]
                     y = column.replace("|", "").find(word)
+                    if clue.reverse_grid_entries:
+                        y += len(word) - 1
                     cell = self.grid[y][x]
                     if not clue.show_grid_label:
                         continue
                     if cell.name and cell.name != clue.label:
                         self.puzzle.error(
-                            f"Duplicate cell label at {x}, {y}: {cell.name} != {clue.name}", "cell_error",
+                            f"Duplicate cell label at {x}, {y}: {cell.name} != {clue.label}", "cell_label",
                         )
                     cell.name = clue.label
 
-    def _parse_grid_style(self):
+    def _pad_grid_style(self, solution=False):
+        """Pad the grid style with spaces to match the dimensions of the grid."""
+        style = self.style
+        # if solution:
+        #     style = self.solution_style
+        #     print("\n".join(self.solution_style))
+        # if not style:
+        #     return
+        while len(style) < self.height:
+            style.append("_" * self.width)
+        for n, row in enumerate(style):
+            row += "_" * (self.width - len(row))
+            style[n] = row
+
+    def _parse_grid_style(self, solution=False):
         """Parse the style information for the grid and update the cells accordingly."""
-        for y, row in enumerate(self.style):
+        # grid = self.grid
+        style = self.style
+        # if solution:
+        #     grid = self.solution
+        #     style = self.solution_style
+
+        for y, row in enumerate(style):
             values = {}
 
             # remove multi-character values from the string, which are literals
@@ -183,8 +259,8 @@ class Grid:
                     continue
 
                 # check if this value has styles defined
-                if value in self.styles:
-                    cell_styles = self.styles[value]
+                cell_styles = self.get_style(value)
+                if cell_styles:
                     # check if the styles define a default value
                     if "default" in cell_styles:
                         cell.default = cell_styles["default"]
@@ -198,9 +274,12 @@ class Grid:
                 elif value != "_":
                     cell.default = value
 
-    def create_cell(self, row, col, value, name=None):
+    def create_cell(self, row, col, value, name=None, solution=False):
         """Create a cell."""
         cell = Cell(row, col, value, self, name)
+        # grid = self.grid
+        # if solution:
+        #     grid = self.solution
         try:
             self.grid[row][col] = cell
         except IndexError:
@@ -208,14 +287,19 @@ class Grid:
             logging.error(error)
         return cell
 
-    def create_grid(self):
+    def create_grid(self, solution=False):
         """Creat the grid data."""
-        # self.create_grid_rows()
-        # self.create_grid_columns()
+        # columns = self.columns
+        # rows = self.rows
+        # grid = self.grid
+
+        # if solution:
+        #     columns = self.solution_columns
+        #     rows = self.solution_rows
+        #     grid = self.solution
 
         for direction in ["rows", "columns"]:
             data = self.columns if direction == "columns" else self.rows
-            # length = self.height if direction == "columns" else self.width
 
             for b, line in enumerate(data):
                 a = 0
@@ -235,13 +319,15 @@ class Grid:
                         logging.error(f"Failed to retrieve cell: {x}, {y}")
                         continue
                     if cell is None:
-                        cell = self.create_cell(y, x, char)
+                        cell = self.create_cell(y, x, char, solution=solution)
+                        if solution:
+                            print(cell)
                     else:
                         if cell.value not in [None, " ", char]:
                             self.puzzle.error(
                                 f"Cell value mismatch at: {x}, {y}: {char}, {cell.value}", "cell_value",
                             )
-                            cell.value += char
+                            cell.value += f" {char}"
                         else:
                             cell.value = char
 
@@ -255,130 +341,10 @@ class Grid:
 
                     a += 1
 
-            self._parse_grid_entries()
-            self._parse_grid_style()
-
-    # def create_grid_columns(self):
-    #     """Create the grid columns."""
-    #     # for each column in the list of all columns
-    #     for col, entries in enumerate(self.columns):
-    #         row = 0
-    #         # get the list of words for this column
-    #         words = entries.rstrip("_").split("|")
-    #         # for each word in this column
-    #         for word in words:
-    #             # initialize a cell
-    #             cell = None
-    #             # for each character in this word
-    #             for n, char in enumerate(word):
-    #                 # name of the cell starts out as None
-    #                 name = None
-    #                 # check if this word gets a name (label)
-    #                 if len(word) > 1 and n == 0:
-    #                     if word in self.puzzle.entries:
-    #                         clue = self.puzzle.entries[word]
-    #                         if clue.show_grid_label:
-    #                             name = clue.label
-    #                 # check if this cell already exists
-    #                 if len(self.grid) > row and len(self.grid[row]) > col and self.grid[row][col]:
-    #                     cell = self.grid[row][col]
-    #                     # check if the name is already set, or set it
-    #                     if name:
-    #                         if cell.name:
-    #                             if cell.name != name:
-    #                                 logging.warning(
-    #                                     f"Cell {row}, {col} already as a label: {cell.name}",
-    #                                 )
-    #                         else:
-    #                             cell.name = name
-    #                     # check if the value is already set and doesn't match
-    #                     if cell.value and cell.value != char:
-    #                         error = (
-    #                             f"Value mismatch parsing columns at {row}-{col}:"
-    #                             f" {char} != {cell.value}"
-    #                         )
-    #                         logging.error(error)
-    #                         cell.value = char + "/" + cell.value
-    #                 # if the cell doesn't already exist, create it
-    #                 else:
-    #                     cell = self.create_cell(row, col, char, name)
-    #                     while len(self.grid) < row + 1:
-    #                         self.grid.append([])
-    #                     while len(self.grid[row]) < col + 1:
-    #                         self.grid[row].append([])
-    #                     self.grid[row][col] = cell
-    #                 # check if the cell needs a top bar added to it
-    #                 if n == 0 and cell.value:
-    #                     cell.set_top_bar()
-    #                 # check if the cell needs a bottom bar added to it
-    #                 if n == len(word) - 1 and cell.value and self.columns[col][n + 1:].replace("_", ""):
-    #                     cell.set_bottom_bar()
-    #                 row += 1
-    #         # add additional cells to fill out the rectangle
-    #         while row < self.height:
-    #             cell = self.create_cell(row, col, "_", None)
-    #             row += 1
-
-    # def create_grid_rows(self):
-    #     """Create the grid rows."""
-    #     # for each row in the list of all rows
-    #     for row, entries in enumerate(self.rows):
-    #         col = 0
-    #         # get the list of words for this row (remove unused cells at tend of the row)
-    #         words = entries.rstrip("_").split("|")
-    #         # for each word in this row
-    #         for word in words:
-    #             # initialize a cell
-    #             cell = None
-    #             # for each character in this word
-    #             for n, char in enumerate(word):
-    #                 # name of the cell starts out as None
-    #                 name = None
-    #                 # check if this word gets a name (label)
-    #                 if len(word) > 1 and n == 0:
-    #                     if word in self.puzzle.entries:
-    #                         clue = self.puzzle.entries[word]
-    #                         if clue.show_grid_label:
-    #                             name = clue.label
-    #                 # check if this cell already exists
-    #                 if len(self.grid) > row and len(self.grid[row]) > col and self.grid[row][col]:
-    #                     cell = self.grid[row][col]
-    #                     # check if the name is already set, or set it
-    #                     if name:
-    #                         if cell.name:
-    #                             if cell.name != name:
-    #                                 logging.warning(
-    #                                     f"Cell {row}, {col} already as a label: {cell.name}",
-    #                                 )
-    #                         else:
-    #                             cell.name = name
-    #                     # check if the value is already set and doesn't match
-    #                     if cell.value and cell.value != char:
-    #                         error = (
-    #                             f"Value mismatch parsing rows at {row}-{col}:"
-    #                             f" {char} != {cell.value}"
-    #                         )
-    #                         logging.error(error)
-    #                         cell.value += "/" + char
-    #                 # if the cell doesn't already exist, create it
-    #                 else:
-    #                     cell = self.create_cell(row, col, char, name)
-    #                     while len(self.grid) < row + 1:
-    #                         self.grid.append([])
-    #                     while len(self.grid[row]) < col + 1:
-    #                         self.grid[row].append([])
-    #                     self.grid[row][col] = cell
-    #                 # check if the cell needs a left bar added to it
-    #                 if n == 0 and cell.value:
-    #                     cell.set_left_bar()
-    #                 # check if the cell needs a right bar added to it
-    #                 if n == len(word) - 1 and cell.value and self.rows[row][n + 1:].replace("_", ""):
-    #                     cell.set_right_bar()
-    #                 col += 1
-    #         # add additional cells to fill out the rectangle
-    #         while col < self.width:
-    #             cell = self.create_cell(row, col, "_", None)
-    #             col += 1
+            # parse grid
+            self._parse_grid_entries(solution=solution)
+            self._pad_grid_style(solution=solution)
+            self._parse_grid_style(solution=solution)
 
     def display_grid(self, show_answers=False, show_numbers=True):
         """Display the grid."""

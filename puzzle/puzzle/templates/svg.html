@@ -8,7 +8,7 @@
   <title>{{ puzzle.title }}</title>
   <desc>Created by HexGrids - https://github.com/lukwam/hexgrids</desc>
   <defs>
-    <circle id="svg-circle" r="22" fill="transparent" stroke="black" stroke-width="1px" />
+    <circle id="svg-circle" r="21" fill="transparent" stroke-width="4px" />
     <circle id="svg-shadecircle" r="22" />
     <rect id="svg-barjoincap" fill="black" height="4" width="4" x="0" y="0" />
     <rect id="svg-block" height="50" width="50" fill="black" stroke="black" stroke-width="1px" />
@@ -56,7 +56,23 @@
   </g>
 
   <!-- Circles -->
-  <g id="svg-circles" />
+  <g id="svg-circles">
+    {%- for row in puzzle.grid.grid %}
+    {%- for cell in row if cell.circle %}
+    <use id="svg-circle-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-circle" stroke="{{ cell.circle }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 29 }}" y="{{ cell.row * 50 + 29 }}" />
+    {%- endfor %}
+    {%- endfor %}
+  </g>
+
+  <!-- Xs -->
+  <g id="svg-xs">
+    {%- for row in puzzle.grid.grid %}
+    {%- for cell in row if cell.shade_x %}
+    <line id="svg-x-{{ cell.row }}-{{ cell.col }}" stroke="{{ cell.shade_x }}" stroke-width="4px" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x1="{{ cell.col * 50 + 8 }}" y1="{{ cell.row * 50 + 8 }}" x2="{{ cell.col * 50 + 50 }}" y2="{{ cell.row * 50 + 50 }}" />
+    <line id="svg-x-{{ cell.row }}-{{ cell.col }}" stroke="{{ cell.shade_x }}" stroke-width="4px" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x1="{{ cell.col * 50 + 50 }}" y1="{{ cell.row * 50 + 8 }}" x2="{{ cell.col * 50 + 8 }}" y2="{{ cell.row * 50 + 50 }}" />
+    {%- endfor %}
+    {%- endfor %}
+  </g>
 
   {% if puzzle.show_grid_bars in ["all", "puzzle"] or (puzzle.show_grid_bars == "solution" and show_solution ) %}
   <!-- Across Bars -->
@@ -78,46 +94,42 @@
   </g>
   {% endif %}
 
+  {% if puzzle.show_grid_bars == "all" or (puzzle.show_grid_bars == "answers" and show_solution) or (puzzle.show_grid_bars == "puzzle" and not show_solution) %}
   <!-- Bar Join Caps -->
   <g id="svg-barjoincaps">
     {%- for row in puzzle.grid.grid %}
     {%- for cell in row %}
     {%- if cell.top_bar and cell.left_bar %}
-    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}"
-      data-row="{{ cell.row }}" x="{{ cell.col * 50 + 2 }}" y="{{ cell.row * 50 + 2 }}" />
+    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 2 }}" y="{{ cell.row * 50 + 2 }}" />
     {%- endif %}
     {%- if cell.top_bar and cell.right_bar %}
-    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}"
-      data-row="{{ cell.row }}" x="{{ cell.col * 50 + 52 }}" y="{{ cell.row * 50 + 2 }}" />
+    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 52 }}" y="{{ cell.row * 50 + 2 }}" />
     {%- endif %}
     {%- if cell.bottom_bar and cell.left_bar %}
-    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}"
-      data-row="{{ cell.row }}" x="{{ cell.col * 50 + 2 }}" y="{{ cell.row * 50 + 52 }}" />
+    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 2 }}" y="{{ cell.row * 50 + 52 }}" />
     {%- endif %}
     {%- if cell.bottom_bar and cell.right_bar %}
-    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}"
-      data-row="{{ cell.row }}" x="{{ cell.col * 50 + 52 }}" y="{{ cell.row * 50 + 52 }}" />
+    <use id="svg-barjoincap-{{ cell.row }}-{{ cell.col }}" xlink:href="#svg-barjoincap" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 52 }}" y="{{ cell.row * 50 + 52 }}" />
     {%- endif %}
     {%- endfor %}
     {%- endfor %}
   </g>
+  {% endif %}
 
   <!-- Numbers/Labels -->
   <g id="svg-numbers" fill="black" font-family="helvetica" font-size="14px">
-    {% for row in puzzle.grid.grid %}
-    {% for cell in row if cell.name %}
-    <text id="svg-number-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x="{{ cell.col * 50 + 8 }}" y="{{ cell.row * 50 + 19 }}">{{ cell.name }}</text>
-    {% endfor %}
-    {% endfor %}
+    {%- for row in puzzle.grid.grid %}
+    {%- for cell in row if cell.name %}
+    <text id="svg-number-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 8 }}" y="{{ cell.row * 50 + 19 }}">{{ cell.name }}</text>
+    {%- endfor %}
+    {%- endfor %}
   </g>
 
   <!-- Defaults -->
   <g id="svg-defaults" fill="black" font-family="helvetica" font-size="24px" text-anchor="middle">
     {%- for row in puzzle.grid.grid %}
     {%- for cell in row if cell.default %}
-    <text id="svg-default-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x="{{ cell.col * 50 + 29 }}" y="{{ cell.row * 50 + 29 }}" dominant-baseline="central">{{ cell.default }}</text>
+    <text id="svg-default-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 29 }}" y="{{ cell.row * 50 + 29 }}" dominant-baseline="central">{{ cell.default }}</text>
     {%- endfor %}
     {%- endfor %}
   </g>
@@ -125,39 +137,34 @@
   {% if show_solution -%}
   <!-- Answers -->
   <g id="svg-answers" fill="black" font-family="helvetica" font-size="24px" text-anchor="middle">
-    {% for row in puzzle.grid.grid %}
-    {% for cell in row if cell.value %}
-    <text id="svg-answer-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x="{{ cell.col * 50 + 29 }}" y="{{ cell.row * 50 + 29 }}" dominant-baseline="central">{{ cell.value }}</text>
-    {% endfor %}
-    {% endfor %}
+    {%- for row in puzzle.grid.grid %}
+    {%- for cell in row if cell.value %}
+    <text id="svg-answer-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x="{{ cell.col * 50 + 29 }}" y="{{ cell.row * 50 + 29 }}" dominant-baseline="central">{{ cell.value }}</text>
+    {%- endfor %}
+    {%- endfor %}
   </g>
   {%- endif %}
 
   {% if puzzle.show_grid_border %}
   <!-- Borders -->
   <g id="svg-border" stroke="black" stroke-width="4px">
-    {% for row in puzzle.grid.grid %}
+    {%- for row in puzzle.grid.grid %}
     {%- for cell in row %}
-    {% if cell.top_border %}
-    <line id="svg-topborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x1="{{ cell.col * 50 + 2 }}" y1="{{ cell.row * 50 + 4 }}" x2="{{ cell.col * 50 + 56 }}" y2="{{ cell.row * 50 + 4 }}" />
+    {%- if cell.top_border %}
+    <line id="svg-topborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x1="{{ cell.col * 50 + 2 }}" y1="{{ cell.row * 50 + 4 }}" x2="{{ cell.col * 50 + 56 }}" y2="{{ cell.row * 50 + 4 }}" />
     {%- endif %}
     {%- if cell.left_border %}
-    <line id="svg-leftborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x1="{{ cell.col * 50 + 4 }}" y1="{{ cell.row * 50 + 2 }}" x2="{{ cell.col * 50 + 4 }}" y2="{{ cell.row * 50 + 56 }}" />
-    {% endif %}
+    <line id="svg-leftborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x1="{{ cell.col * 50 + 4 }}" y1="{{ cell.row * 50 + 2 }}" x2="{{ cell.col * 50 + 4 }}" y2="{{ cell.row * 50 + 56 }}" />
+    {%- endif %}
     {%- if cell.right_border %}
-    <line id="svg-rightborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x1="{{ cell.col * 50 + 54 }}" y1="{{ cell.row * 50 + 2 }}" x2="{{ cell.col * 50 + 54 }}" y2="{{ cell.row * 50 + 56 }}" />
-    {% endif %}
-    {% if cell.bottom_border %}
-    <line id="svg-bottomborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}"
-      x1="{{ cell.col * 50 + 2 }}" y1="{{ cell.row * 50 + 54 }}" x2="{{ cell.col * 50 + 56 }}" y2="{{ cell.row * 50 + 54 }}" />
+    <line id="svg-rightborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x1="{{ cell.col * 50 + 54 }}" y1="{{ cell.row * 50 + 2 }}" x2="{{ cell.col * 50 + 54 }}" y2="{{ cell.row * 50 + 56 }}" />
+    {%- endif %}
+    {%- if cell.bottom_border %}
+    <line id="svg-bottomborder-{{ cell.row }}-{{ cell.col }}" data-col="{{ cell.col }}" data-row="{{ cell.row }}" x1="{{ cell.col * 50 + 2 }}" y1="{{ cell.row * 50 + 54 }}" x2="{{ cell.col * 50 + 56 }}" y2="{{ cell.row * 50 + 54 }}" />
     {%- endif %}
     {%- endfor %}
     {%- endfor %}
   </g>
-  {% endif %}
+  {%- endif %}
 
 </svg>

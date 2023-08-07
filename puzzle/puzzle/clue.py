@@ -61,17 +61,24 @@ class Clue:
         """Return the clue label."""
         if ";" in self._name:
             return self._name.split(";")[1]
-        return self._name
+        return self.name
 
     @property
     def name(self):
         """Return the clue name."""
         name = self._name
+        if not name:
+            return ""
         if "|" in name:
             name = name.split("|")[0]
         if ";" in name:
             name = name.split(";")[0]
         return name
+
+    @property
+    def reverse_grid_entries(self):
+        """Return whether to reverse grid entries."""
+        return self.container.reverse_grid_entries
 
     @property
     def show_enumeration(self):
@@ -252,7 +259,7 @@ class Clue:
         """Parse a clue string."""
         name = r"^(?P<name>[^\.]+)\."
         clue = r"(?P<clue>.+)"
-        ans = r"(?P<answer>[- A-Z;\|]+)"
+        ans = r"(?P<answer>[- A-Z0-9★;\|]+)"
         sol = r"(?P<solution>.*)"
 
         # all parts are provided
@@ -282,7 +289,7 @@ class Clue:
         """Parse a solution string."""
         solutions = []
         for solution in solution_string.split(";"):
-            solution = solution.strip()
+            solution = solution.strip().replace("<i>", '"').replace("</i>", '"')
             if solution:
                 solutions.append(solution)
         return solutions
@@ -362,6 +369,11 @@ class Clue:
     def set_entries(self, entries):
         """Set the entries."""
         # TODO: add validation for incoming entries
+        if self.reverse_grid_entries:
+            if not entries:
+                entries = self.answers
+            for n, entry in enumerate(entries):
+                entries[n] = entry[::-1]
         self._entries = entries
 
     def set_name(self, name):
@@ -379,6 +391,18 @@ class Clue:
         """Set the solutions."""
         # TODO: add validation for incoming solutions
         self._solutions = solutions
+
+    @property
+    def raw(self):
+        """Return a raw representation of the entry."""
+        answers = ';'.join(self._answers)
+        entries = ';'.join(self._entries)
+        solutions = ';'.join(self._solutions)
+
+        if entries:
+            answers = f"{answers}|{entries}"
+
+        return f"{self._name}. {self._clue} ~ {answers} ~ {solutions}"
 
     def to_text(self):
         """Return a text representation of the entry."""
